@@ -304,6 +304,25 @@ vim.keymap.set("v", "<D-c>", '"+ygv', { silent = true })
 vim.keymap.set({ "n", "i", "v" }, "<C-v>", '"+p', { silent = true })
 vim.keymap.set({ "n", "i", "v" }, "<D-v>", '"+p', { silent = true })
 
+-- Shift+Arrow: Select text (VSCode-like)
+-- From normal mode: start visual selection
+vim.keymap.set("n", "<S-Left>", "vh", { silent = true })
+vim.keymap.set("n", "<S-Right>", "vl", { silent = true })
+vim.keymap.set("n", "<S-Up>", "vk", { silent = true })
+vim.keymap.set("n", "<S-Down>", "vj", { silent = true })
+
+-- From insert mode: exit to visual and select
+vim.keymap.set("i", "<S-Left>", "<Esc>vh", { silent = true })
+vim.keymap.set("i", "<S-Right>", "<Esc>vl", { silent = true })
+vim.keymap.set("i", "<S-Up>", "<Esc>vk", { silent = true })
+vim.keymap.set("i", "<S-Down>", "<Esc>vj", { silent = true })
+
+-- From visual mode: extend selection
+vim.keymap.set("v", "<S-Left>", "h", { silent = true })
+vim.keymap.set("v", "<S-Right>", "l", { silent = true })
+vim.keymap.set("v", "<S-Up>", "k", { silent = true })
+vim.keymap.set("v", "<S-Down>", "j", { silent = true })
+
 
 ----------------------------------------------------------------------
 -- 7. File Tree (netrw)
