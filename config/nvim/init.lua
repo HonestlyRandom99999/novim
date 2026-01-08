@@ -418,19 +418,14 @@ function _G.get_editor_hints()
   end
 end
 
--- Fixed hints for file tree (includes git)
-function _G.get_tree_hints()
-  return "Git: ^G Status  ^L Log  ^D Diff  |  ? Help  Esc×2 Quit"
-end
-
 -- Set statusline based on buffer type
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
   pattern = "*",
   callback = function()
     local ft = vim.bo.filetype
     if ft == "netrw" then
-      -- File tree: git + navigation hints
-      vim.wo.statusline = " %{v:lua.get_tree_hints()} "
+      -- File tree: Esc (left), Git (center), ? (right)
+      vim.wo.statusline = " Esc×2 Quit%=Git: ^G Status  ^L Log  ^D Diff%=? Help "
     else
       -- Editor: filename left, editor hints right
       vim.wo.statusline = " %f%m%=%{v:lua.get_editor_hints()} "
