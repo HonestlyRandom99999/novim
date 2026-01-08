@@ -330,10 +330,9 @@ local function show_help()
     "",
     "              Welcome to novim",
     "",
-    "  BASIC EDITING",
+    "  EDITING",
     "    Click anywhere      Move cursor",
     "    Type                Insert text",
-    "    Backspace/Delete    Remove text",
     "    Drag to select      Select text",
     "",
     "  SHORTCUTS",
@@ -344,12 +343,16 @@ local function show_help()
     "    Ctrl+C              Copy",
     "    Ctrl+V              Paste",
     "",
-    "  FILE TREE (left panel)",
-    "    Click file          Open in editor",
-    "    Enter on file       Open in editor",
+    "  GIT",
+    "    Ctrl+G              Git status",
+    "    Ctrl+L              Git log",
+    "    Ctrl+D              Git diff",
+    "",
+    "  FILE TREE",
+    "    Double-click        Open file",
     "",
     "  EXIT",
-    "    Esc Esc (twice)     Quit editor",
+    "    Esc Esc             Quit",
     "",
     "        Press any key to close...",
     "",
@@ -407,17 +410,22 @@ function _G.get_editor_hints()
   local modified = vim.bo.modified
 
   if mode == "v" or mode == "V" or mode == "\22" then
-    return "^C Copy  ^X Cut  ^A Select All"
+    return "^C Copy  ^X Cut  ^A All"
   elseif modified then
-    return "^S Save  ^Z Undo  |  ^G Status  ^L Log  ^D Diff"
+    return "^S Save  ^Z Undo"
   else
-    return "^G Status  ^L Log  ^D Diff  |  ^V Paste  ^A Select All"
+    return "^V Paste  ^A All"
   end
 end
 
--- Fixed hints for file tree (2 lines)
+-- Git hints (always visible)
+function _G.get_git_hints()
+  return "Git: ^G ^L ^D"
+end
+
+-- Fixed hints for file tree
 function _G.get_tree_hints()
-  return "^G Status  ^L Log  ^D Diff  |  ? Help  |  Esc Esc Quit"
+  return "? Help  Esc×2 Quit"
 end
 
 -- Set statusline based on buffer type
@@ -426,11 +434,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
   callback = function()
     local ft = vim.bo.filetype
     if ft == "netrw" then
-      -- File tree: fixed hints
-      vim.wo.statusline = " %f%=%{v:lua.get_tree_hints()} "
+      -- File tree: git hints on left, navigation hints on right
+      vim.wo.statusline = " %{v:lua.get_git_hints()}%=%{v:lua.get_tree_hints()} "
     else
-      -- Editor: dynamic hints
-      vim.wo.statusline = " %f%m%=%{v:lua.get_editor_hints()} "
+      -- Editor: filename + git hints on left, editor hints on right
+      vim.wo.statusline = " %f%m  %{v:lua.get_git_hints()}%=%{v:lua.get_editor_hints()} "
     end
   end,
 })
