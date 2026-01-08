@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/logo.png" alt="novim" width="400">
+  <img src="docs/logo.png" alt="novim" width="100%">
 </p>
 
 <h1 align="center">novim</h1>
