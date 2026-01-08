@@ -322,6 +322,51 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Single click: move cursor (default)
     -- Double click: open/expand (same as Enter)
     vim.keymap.set("n", "<2-LeftMouse>", "<CR>", { buffer = true, silent = true })
+
+    -- Ctrl+click: open file with system default app (for images, etc.)
+    vim.keymap.set("n", "<C-LeftMouse>", function()
+      -- Move cursor to click position first
+      local mouse_pos = vim.fn.getmousepos()
+      if mouse_pos.line > 0 then
+        vim.api.nvim_win_set_cursor(0, { mouse_pos.line, 0 })
+      end
+
+      -- Get the file name from current line (netrw tree format)
+      local line = vim.fn.getline(".")
+      -- Extract filename: last non-space sequence after tree characters
+      local file = line:match("[^%s│├└─]+$")
+      if not file or file == "" then return end
+
+      -- Get the current directory from netrw
+      local dir = vim.b.netrw_curdir or vim.fn.getcwd()
+      local filepath = dir .. "/" .. file
+
+      -- Check if it's a file (not a directory)
+      if vim.fn.isdirectory(filepath) == 1 then
+        -- It's a directory, just expand it normally
+        vim.cmd("normal \\<CR>")
+        return
+      end
+
+      -- Check if file exists
+      if vim.fn.filereadable(filepath) == 0 then return end
+
+      -- Open with system default app
+      local cmd
+      if vim.fn.has("mac") == 1 then
+        cmd = "open"
+      elseif vim.fn.has("unix") == 1 then
+        cmd = "xdg-open"
+      elseif vim.fn.has("win32") == 1 then
+        cmd = "start"
+      else
+        vim.api.nvim_echo({{"Cannot detect OS for opening files", "WarningMsg"}}, false, {})
+        return
+      end
+
+      vim.fn.jobstart({ cmd, filepath }, { detach = true })
+      vim.api.nvim_echo({{"Opened: " .. file, "String"}}, false, {})
+    end, { buffer = true, silent = true })
   end,
 })
 
@@ -355,6 +400,7 @@ local function show_help()
     "",
     "  FILE TREE",
     "    Double-click        Open file",
+    "    Ctrl+click          Open externally",
     "",
     "  EXIT",
     "    Esc Esc             Quit",
@@ -429,8 +475,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
   callback = function()
     local ft = vim.bo.filetype
     if ft == "netrw" then
-      -- File tree: Esc (left), Git (center), ? (right)
-      vim.wo.statusline = " Esc×2 Quit%=Git: ^G Status  ^L Log  ^D Diff%=? Help "
+      -- File tree: Quit/Open (left), Git (center), Help (right)
+      vim.wo.statusline = " Esc×2 Quit  ^Click Open%=Git: ^G ^L ^D%=? Help "
     else
       -- Editor: filename left, editor hints right
       vim.wo.statusline = " %f%m%=%{v:lua.get_editor_hints()} "

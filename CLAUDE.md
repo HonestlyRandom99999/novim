@@ -40,6 +40,11 @@ novim/
 - Uses `vim.ui.select()` for VSCode-like options
 - Options: Save and Quit, Quit without Saving, Cancel
 
+### File Tree Mouse Operations (ADR-004)
+- Double-click: Open file in editor / expand directory
+- Ctrl+click: Open file with system default app (macOS: `open`, Linux: `xdg-open`)
+- Useful for images, PDFs, and other non-text files
+
 ## Implementation Notes
 
 ### bin/novim
@@ -70,6 +75,7 @@ Version is stored in `VERSION` file. Release workflow:
 - [ ] `novim --version` shows version
 - [ ] File tree opens on left (1/3 width)
 - [ ] Double-click expands directories
+- [ ] Ctrl+click opens file with system app (images, etc.)
 - [ ] Typing inserts text (no vim commands)
 - [ ] Ctrl+S saves with "Saved!" message
 - [ ] Esc Esc shows quit confirmation

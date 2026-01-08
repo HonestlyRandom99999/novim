@@ -66,7 +66,7 @@ Mac users: Cmd key also works (Cmd+S, Cmd+Z, etc.)
 ## Features
 
 - **VSCode-like experience** - Just type to edit, no modes to learn
-- **Mouse support** - Click, drag, select, double-click to open
+- **Mouse support** - Click, drag, select, double-click to open, Ctrl+click to open externally
 - **Standard shortcuts** - Ctrl+S, Ctrl+Z, Ctrl+C/V work as expected
 - **File tree** - Built-in file browser on the left (1/3 of screen)
 - **Dynamic hints** - Status bar shows relevant shortcuts for current context

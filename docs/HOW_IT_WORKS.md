@@ -117,6 +117,10 @@ vim.g.netrw_banner = 0         -- No banner
 vim.g.netrw_winsize = 33       -- 1/3 width
 ```
 
+Mouse behavior:
+- Double-click: Open file in editor / expand directory
+- Ctrl+click: Open file with system default app (for images, PDFs, etc.)
+
 ### 6. Color Scheme
 
 Tokyo Night colors are hardcoded directly in the config:
