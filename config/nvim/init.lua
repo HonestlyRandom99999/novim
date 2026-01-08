@@ -420,7 +420,7 @@ end
 
 -- Fixed hints for file tree (includes git)
 function _G.get_tree_hints()
-  return "^G Status  ^L Log  ^D Diff  |  ? Help  Esc×2 Quit"
+  return "Git: ^G Status  ^L Log  ^D Diff  |  ? Help  Esc×2 Quit"
 end
 
 -- Set statusline based on buffer type
