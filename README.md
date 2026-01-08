@@ -8,10 +8,10 @@ A friendly terminal editor for vibe coders. Not vim.
 curl -fsSL novim.dev/install | bash
 ```
 
-Or via Homebrew:
+## Uninstall
 
 ```bash
-brew install novim
+rm -rf ~/.local/bin/novim ~/.local/share/novim
 ```
 
 ## Usage
@@ -45,7 +45,8 @@ Press `?` for help.
 
 ## Requirements
 
-- Neovim (installed automatically via Homebrew)
+- Neovim 0.8+ (installed automatically if not found)
+- macOS, Linux, or WSL
 
 ## Credits
 

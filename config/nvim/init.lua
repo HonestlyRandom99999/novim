@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
 -- novim - A friendly terminal editor for vibe coders
--- https://github.com/ogawariku/novim
+-- https://github.com/link2004/novim
 --
 -- Features:
 --   - Mouse-based operation

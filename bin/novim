@@ -1,17 +1,24 @@
 #!/bin/bash
 # novim - A friendly terminal editor for vibe coders
-# https://github.com/ogawariku/novim
+# https://github.com/link2004/novim
 
-# Get the real path (macOS compatible)
-get_real_path() {
-  local path="$1"
-  if command -v realpath &> /dev/null; then
-    realpath "$path"
-  else
-    cd "$(dirname "$path")" && pwd -P
-  fi
-}
+NOVIM_VERSION="0.1.0"
 
+# Show version
+if [[ "$1" == "--version" || "$1" == "-v" ]]; then
+  echo "novim $NOVIM_VERSION"
+  echo "powered by $(nvim --version | head -1)"
+  exit 0
+fi
+
+# Check nvim exists
+if ! command -v nvim &> /dev/null; then
+  echo "Error: Neovim is not installed." >&2
+  echo "Install it with: brew install neovim" >&2
+  exit 1
+fi
+
+# Setup paths
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 NOVIM_ROOT="$(dirname "$SCRIPT_DIR")"
 NOVIM_CONFIG="$NOVIM_ROOT/config"

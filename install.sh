@@ -21,12 +21,33 @@ echo ""
 INSTALL_DIR="${HOME}/.local/bin"
 NOVIM_DIR="${HOME}/.local/share/novim"
 REPO="link2004/novim"
+MIN_NVIM_VERSION="0.8.0"
+
+# Cleanup on error
+cleanup() {
+  if [[ -d "$NOVIM_DIR" && ! -f "$NOVIM_DIR/bin/novim" ]]; then
+    rm -rf "$NOVIM_DIR"
+  fi
+}
+trap cleanup ERR
+
+# Compare versions
+version_gte() {
+  printf '%s\n%s\n' "$2" "$1" | sort -V -C
+}
 
 # Check for Neovim
 check_neovim() {
   if command -v nvim &> /dev/null; then
-    echo -e "${GREEN}✓${NC} Neovim found"
-    return 0
+    local version
+    version=$(nvim --version | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+    if version_gte "$version" "$MIN_NVIM_VERSION"; then
+      echo -e "${GREEN}✓${NC} Neovim $version found"
+      return 0
+    else
+      echo -e "${YELLOW}!${NC} Neovim $version found (need $MIN_NVIM_VERSION+)"
+      return 1
+    fi
   else
     echo -e "${YELLOW}!${NC} Neovim not found"
     return 1
@@ -40,12 +61,14 @@ install_neovim() {
   if command -v brew &> /dev/null; then
     brew install neovim
   elif command -v apt-get &> /dev/null; then
+    echo -e "${YELLOW}!${NC} sudo required for apt-get"
     sudo apt-get update && sudo apt-get install -y neovim
   elif command -v pacman &> /dev/null; then
-    sudo pacman -S neovim
+    echo -e "${YELLOW}!${NC} sudo required for pacman"
+    sudo pacman -S --noconfirm neovim
   else
     echo -e "${RED}✗${NC} Could not install Neovim automatically."
-    echo "  Please install Neovim manually: https://neovim.io/"
+    echo "  Please install Neovim 0.8+ manually: https://neovim.io/"
     exit 1
   fi
 
@@ -63,18 +86,39 @@ install_novim() {
   # Download latest release
   LATEST_URL="https://github.com/${REPO}/releases/latest/download/novim.tar.gz"
 
+  local tmp_file
+  tmp_file=$(mktemp)
+
   if command -v curl &> /dev/null; then
-    curl -fsSL "$LATEST_URL" | tar -xz -C "$NOVIM_DIR" --strip-components=1
+    if ! curl -fsSL "$LATEST_URL" -o "$tmp_file"; then
+      echo -e "${RED}✗${NC} Failed to download novim"
+      rm -f "$tmp_file"
+      exit 1
+    fi
   elif command -v wget &> /dev/null; then
-    wget -qO- "$LATEST_URL" | tar -xz -C "$NOVIM_DIR" --strip-components=1
+    if ! wget -q "$LATEST_URL" -O "$tmp_file"; then
+      echo -e "${RED}✗${NC} Failed to download novim"
+      rm -f "$tmp_file"
+      exit 1
+    fi
   else
     echo -e "${RED}✗${NC} curl or wget required"
     exit 1
   fi
 
+  # Extract
+  if ! tar -xzf "$tmp_file" -C "$NOVIM_DIR" --strip-components=1; then
+    echo -e "${RED}✗${NC} Failed to extract novim"
+    rm -f "$tmp_file"
+    exit 1
+  fi
+
+  rm -f "$tmp_file"
+
   # Create symlink
   ln -sf "$NOVIM_DIR/bin/novim" "$INSTALL_DIR/novim"
   chmod +x "$INSTALL_DIR/novim"
+  chmod +x "$NOVIM_DIR/bin/novim"
 
   echo -e "${GREEN}✓${NC} novim installed to $INSTALL_DIR/novim"
 }
