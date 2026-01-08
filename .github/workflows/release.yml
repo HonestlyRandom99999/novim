@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update version in bin/novim
+        run: |
+          sed -i "s/NOVIM_VERSION=\".*\"/NOVIM_VERSION=\"${{ steps.version.outputs.VERSION }}\"/" bin/novim
+
+      - name: Update VERSION file
+        run: echo "${{ steps.version.outputs.VERSION }}" > VERSION
+
+      - name: Create tarball
+        run: |
+          mkdir -p dist/novim
+          cp -r bin config LICENSE README.md VERSION dist/novim/
+          cd dist && tar -czvf novim.tar.gz novim
+
+      - name: Sync docs/install with install.sh
+        run: cp install.sh docs/install
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/novim.tar.gz
+          generate_release_notes: true

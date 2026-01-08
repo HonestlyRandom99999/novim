@@ -8,10 +8,16 @@ A friendly terminal editor for vibe coders. Not vim.
 curl -fsSL novim.dev/install | bash
 ```
 
+## Update
+
+```bash
+novim --update
+```
+
 ## Uninstall
 
 ```bash
-rm -rf ~/.local/bin/novim ~/.local/share/novim
+novim --uninstall
 ```
 
 ## Usage
@@ -19,9 +25,11 @@ rm -rf ~/.local/bin/novim ~/.local/share/novim
 ```bash
 novim              # Open editor
 novim file.txt     # Open file
+novim --help       # Show help
+novim --version    # Show version
 ```
 
-Press `?` for help.
+Press `?` for help inside the editor.
 
 ## Shortcuts
 
@@ -31,17 +39,24 @@ Press `?` for help.
 | Ctrl+Z | Undo |
 | Ctrl+Shift+Z | Redo |
 | Ctrl+A | Select all |
-| Ctrl+C | Copy |
+| Ctrl+C | Copy (keeps selection) |
 | Ctrl+V | Paste |
-| Esc Esc | Quit |
+| Ctrl+X | Cut |
+| Esc Esc | Quit (with save confirmation) |
 | ? | Help |
+
+Mac users: Cmd key also works (Cmd+S, Cmd+Z, etc.)
 
 ## Features
 
-- Mouse support (click, drag, select)
-- Standard keyboard shortcuts
-- File tree on the left
-- No vim knowledge required
+- **VSCode-like experience** - Just type to edit, no modes to learn
+- **Mouse support** - Click, drag, select, double-click to open
+- **Standard shortcuts** - Ctrl+S, Ctrl+Z, Ctrl+C/V work as expected
+- **File tree** - Built-in file browser on the left (1/3 of screen)
+- **Dynamic hints** - Status bar shows relevant shortcuts for current context
+- **Change highlighting** - Modified lines are highlighted until saved
+- **Safe quit** - Prompts to save unsaved changes on exit
+- **No vim knowledge required**
 
 ## Requirements
 

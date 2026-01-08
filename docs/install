@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Colors
 RED='\033[0;31m'
@@ -31,9 +31,20 @@ cleanup() {
 }
 trap cleanup ERR
 
-# Compare versions
+# Compare versions (compatible with macOS/BSD without sort -V)
 version_gte() {
-  printf '%s\n%s\n' "$2" "$1" | sort -V -C
+  local v1="${1:-0}" v2="${2:-0}"
+  local IFS='.'
+  read -ra v1_parts <<< "$v1"
+  read -ra v2_parts <<< "$v2"
+
+  for i in 0 1 2; do
+    local n1="${v1_parts[i]:-0}"
+    local n2="${v2_parts[i]:-0}"
+    if (( n1 > n2 )); then return 0; fi
+    if (( n1 < n2 )); then return 1; fi
+  done
+  return 0
 }
 
 # Check for Neovim
@@ -61,8 +72,17 @@ install_neovim() {
   if command -v brew &> /dev/null; then
     brew install neovim
   elif command -v apt-get &> /dev/null; then
-    echo -e "${YELLOW}!${NC} sudo required for apt-get"
-    sudo apt-get update && sudo apt-get install -y neovim
+    # Ubuntu/Debian repos often have old neovim, use snap instead
+    if command -v snap &> /dev/null; then
+      echo -e "${YELLOW}!${NC} sudo required for snap"
+      sudo snap install nvim --classic
+    else
+      echo -e "${RED}✗${NC} Ubuntu/Debian apt has outdated Neovim."
+      echo "  Install snap first: sudo apt install snapd"
+      echo "  Then run this installer again."
+      echo "  Or install manually: https://github.com/neovim/neovim/releases"
+      exit 1
+    fi
   elif command -v pacman &> /dev/null; then
     echo -e "${YELLOW}!${NC} sudo required for pacman"
     sudo pacman -S --noconfirm neovim
