@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Neovim runtime files
+config/data/
+config/state/

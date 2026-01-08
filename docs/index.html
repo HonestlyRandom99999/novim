@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>novim - A friendly terminal editor</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container { max-width: 600px; text-align: center; }
+    h1 { font-size: 3rem; margin-bottom: 0.5rem; color: #58a6ff; }
+    .tagline { font-size: 1.2rem; color: #8b949e; margin-bottom: 2rem; }
+    .install-box {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .install-box code {
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 1rem;
+      color: #7ee787;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+      text-align: left;
+    }
+    .feature {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+    }
+    .feature h3 { color: #58a6ff; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .feature p { color: #8b949e; font-size: 0.85rem; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .github { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>novim</h1>
+    <p class="tagline">A friendly terminal editor for vibe coders. Not vim.</p>
+
+    <div class="install-box">
+      <code>curl -fsSL novim.dev/install | bash</code>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <h3>Mouse Support</h3>
+        <p>Click, drag, select. Just like any editor.</p>
+      </div>
+      <div class="feature">
+        <h3>Standard Shortcuts</h3>
+        <p>Ctrl+S, Ctrl+Z, Ctrl+C/V. No learning curve.</p>
+      </div>
+      <div class="feature">
+        <h3>File Tree</h3>
+        <p>Built-in file browser on the left.</p>
+      </div>
+      <div class="feature">
+        <h3>No Vim Required</h3>
+        <p>Zero vim knowledge needed.</p>
+      </div>
+    </div>
+
+    <p class="github">
+      <a href="https://github.com/ogawariku/novim">GitHub</a>
+    </p>
+  </div>
+</body>
+</html>

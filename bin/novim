@@ -1,0 +1,23 @@
+#!/bin/bash
+# novim - A friendly terminal editor for vibe coders
+# https://github.com/ogawariku/novim
+
+# Get the real path (macOS compatible)
+get_real_path() {
+  local path="$1"
+  if command -v realpath &> /dev/null; then
+    realpath "$path"
+  else
+    cd "$(dirname "$path")" && pwd -P
+  fi
+}
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+NOVIM_ROOT="$(dirname "$SCRIPT_DIR")"
+NOVIM_CONFIG="$NOVIM_ROOT/config"
+
+export XDG_CONFIG_HOME="$NOVIM_CONFIG"
+export XDG_DATA_HOME="$NOVIM_CONFIG/data"
+export XDG_STATE_HOME="$NOVIM_CONFIG/state"
+
+exec nvim "$@"
