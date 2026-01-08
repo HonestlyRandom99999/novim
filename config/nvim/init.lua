@@ -495,3 +495,35 @@ end
 
 -- Press Esc twice to quit (with confirmation if unsaved)
 vim.keymap.set("n", "<Esc><Esc>", quit_with_confirm, { silent = true })
+
+
+----------------------------------------------------------------------
+-- 9. Git Signs (show changed lines)
+----------------------------------------------------------------------
+
+require("gitsigns").setup({
+  signs = {
+    add          = { text = "│" },
+    change       = { text = "│" },
+    delete       = { text = "_" },
+    topdelete    = { text = "‾" },
+    changedelete = { text = "~" },
+  },
+  signs_staged = {
+    add          = { text = "│" },
+    change       = { text = "│" },
+    delete       = { text = "_" },
+    topdelete    = { text = "‾" },
+    changedelete = { text = "~" },
+  },
+  signcolumn = true,
+  numhl = false,
+  linehl = false,
+  word_diff = false,
+  current_line_blame = false,  -- Set to true to show git blame inline
+})
+
+-- Gitsigns colors (Tokyo Night style)
+hl("GitSignsAdd", { fg = colors.green })
+hl("GitSignsChange", { fg = colors.blue })
+hl("GitSignsDelete", { fg = colors.red })
