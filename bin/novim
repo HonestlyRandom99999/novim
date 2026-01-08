@@ -81,17 +81,68 @@ fi
 
 # Uninstall novim
 if [[ "${1:-}" == "--uninstall" ]]; then
-  echo -e "${YELLOW}This will remove novim from your system.${NC}"
-  read -p "Are you sure? [y/N] " -n 1 -r
+  echo ""
+  echo -e "${YELLOW}Uninstall novim${NC}"
+  echo ""
+  echo "This will remove:"
+  echo "  - $INSTALL_DIR/novim"
+  echo "  - $NOVIM_DIR/"
+  echo ""
+  read -p "Remove novim? [y/N] " -n 1 -r
+  echo
+
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Cancelled."
+    exit 0
+  fi
+
+  # Remove novim
+  rm -f "$INSTALL_DIR/novim"
+  rm -rf "$NOVIM_DIR"
+  echo -e "${GREEN}✓${NC} novim has been removed."
+  echo ""
+
+  # Ask about Neovim
+  echo -e "${BLUE}Note:${NC} Neovim is still installed on your system."
+  echo ""
+  read -p "Also remove Neovim? [y/N] " -n 1 -r
   echo
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    rm -f "$INSTALL_DIR/novim"
-    rm -rf "$NOVIM_DIR"
-    echo -e "${GREEN}novim has been uninstalled.${NC}"
+    echo ""
+    if command -v brew &> /dev/null; then
+      echo -e "${BLUE}Removing Neovim via Homebrew...${NC}"
+      brew uninstall neovim
+    elif command -v snap &> /dev/null && snap list nvim &> /dev/null; then
+      echo -e "${BLUE}Removing Neovim via Snap...${NC}"
+      sudo snap remove nvim
+    elif command -v apt-get &> /dev/null; then
+      echo -e "${BLUE}Removing Neovim via apt...${NC}"
+      sudo apt-get remove -y neovim
+    elif command -v pacman &> /dev/null; then
+      echo -e "${BLUE}Removing Neovim via pacman...${NC}"
+      sudo pacman -R --noconfirm neovim
+    else
+      echo -e "${YELLOW}Could not detect package manager.${NC}"
+      echo "Please remove Neovim manually."
+    fi
+    echo -e "${GREEN}✓${NC} Neovim has been removed."
   else
-    echo "Cancelled."
+    echo ""
+    echo "Neovim was kept. You can remove it later with:"
+    if command -v brew &> /dev/null; then
+      echo "  brew uninstall neovim"
+    elif command -v snap &> /dev/null; then
+      echo "  sudo snap remove nvim"
+    elif command -v apt-get &> /dev/null; then
+      echo "  sudo apt remove neovim"
+    elif command -v pacman &> /dev/null; then
+      echo "  sudo pacman -R neovim"
+    fi
   fi
+
+  echo ""
+  echo -e "${GREEN}Done!${NC}"
   exit 0
 fi
 
