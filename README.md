@@ -137,6 +137,11 @@ novim is built on top of amazing open source projects:
   License: MIT
   Copyright © enkia
 
+### Logo
+
+- **[oh-my-logo](https://github.com/shinshin86/oh-my-logo)** - ASCII logo inspiration
+  License: MIT / CC0-1.0
+
 ### Similar Projects
 
 - **[novim-mode](https://github.com/tombh/novim-mode)** - A Vim plugin with similar goals (make Vim behave like a normal editor). novim is a separate project with a different approach (standalone wrapper vs plugin).
