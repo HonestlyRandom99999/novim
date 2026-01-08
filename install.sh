@@ -18,16 +18,6 @@ BR_CYAN='\033[1;36m'
 BR_BLUE='\033[1;34m'
 BR_MAGENTA='\033[1;35m'
 
-echo -e "${BLUE}"
-echo "                      _"
-echo "  _ __   _____   __ (_)_ __ ___"
-echo " | '_ \ / _ \ \ / / | | '_ \` _ \\"
-echo " | | | | (_) \ V /  | | | | | | |"
-echo " |_| |_|\___/ \_/   |_|_| |_| |_|"
-echo ""
-echo -e "${NC}A friendly terminal editor for vibe coders"
-echo ""
-
 INSTALL_DIR="${HOME}/.local/bin"
 NOVIM_DIR="${HOME}/.local/share/novim"
 REPO="link2004/novim"
