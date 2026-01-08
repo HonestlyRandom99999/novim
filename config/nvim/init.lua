@@ -527,3 +527,143 @@ require("gitsigns").setup({
 hl("GitSignsAdd", { fg = colors.green })
 hl("GitSignsChange", { fg = colors.blue })
 hl("GitSignsDelete", { fg = colors.red })
+
+
+----------------------------------------------------------------------
+-- 10. Git Shortcuts
+----------------------------------------------------------------------
+
+-- Show git status in a floating window
+local function show_git_status()
+  local buf = vim.api.nvim_create_buf(false, true)
+  local width = math.floor(vim.o.columns * 0.8)
+  local height = math.floor(vim.o.lines * 0.6)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " Git Status ",
+    title_pos = "center",
+  })
+
+  vim.fn.termopen("git status", {
+    on_exit = function()
+      vim.api.nvim_buf_set_keymap(buf, "n", "q", "", {
+        callback = function()
+          vim.api.nvim_win_close(win, true)
+        end,
+        noremap = true,
+        silent = true,
+      })
+      vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "", {
+        callback = function()
+          vim.api.nvim_win_close(win, true)
+        end,
+        noremap = true,
+        silent = true,
+      })
+    end,
+  })
+  vim.cmd("startinsert")
+end
+
+-- Show git log in a floating window
+local function show_git_log()
+  local buf = vim.api.nvim_create_buf(false, true)
+  local width = math.floor(vim.o.columns * 0.8)
+  local height = math.floor(vim.o.lines * 0.7)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " Git Log ",
+    title_pos = "center",
+  })
+
+  vim.fn.termopen("git log --oneline --graph --decorate -30", {
+    on_exit = function()
+      vim.api.nvim_buf_set_keymap(buf, "n", "q", "", {
+        callback = function()
+          vim.api.nvim_win_close(win, true)
+        end,
+        noremap = true,
+        silent = true,
+      })
+      vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "", {
+        callback = function()
+          vim.api.nvim_win_close(win, true)
+        end,
+        noremap = true,
+        silent = true,
+      })
+    end,
+  })
+  vim.cmd("startinsert")
+end
+
+-- Show git diff in a floating window
+local function show_git_diff()
+  local buf = vim.api.nvim_create_buf(false, true)
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.8)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " Git Diff ",
+    title_pos = "center",
+  })
+
+  vim.fn.termopen("git diff --color", {
+    on_exit = function()
+      vim.api.nvim_buf_set_keymap(buf, "n", "q", "", {
+        callback = function()
+          vim.api.nvim_win_close(win, true)
+        end,
+        noremap = true,
+        silent = true,
+      })
+      vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "", {
+        callback = function()
+          vim.api.nvim_win_close(win, true)
+        end,
+        noremap = true,
+        silent = true,
+      })
+    end,
+  })
+  vim.cmd("startinsert")
+end
+
+-- Ctrl+G / Cmd+G: Git status
+vim.keymap.set({ "n", "i", "v" }, "<C-g>", show_git_status, { silent = true })
+vim.keymap.set({ "n", "i", "v" }, "<D-g>", show_git_status, { silent = true })
+
+-- Ctrl+L / Cmd+L: Git log
+vim.keymap.set({ "n", "i", "v" }, "<C-l>", show_git_log, { silent = true })
+vim.keymap.set({ "n", "i", "v" }, "<D-l>", show_git_log, { silent = true })
+
+-- Ctrl+D / Cmd+D: Git diff
+vim.keymap.set({ "n", "i", "v" }, "<C-d>", show_git_diff, { silent = true })
+vim.keymap.set({ "n", "i", "v" }, "<D-d>", show_git_diff, { silent = true })
