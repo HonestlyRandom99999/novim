@@ -429,11 +429,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
   callback = function()
     local ft = vim.bo.filetype
     if ft == "netrw" then
-      -- File tree: all hints
+      -- File tree: git + navigation hints
       vim.wo.statusline = " %{v:lua.get_tree_hints()} "
     else
-      -- Editor: filename only
-      vim.wo.statusline = " %f%m "
+      -- Editor: filename left, editor hints right
+      vim.wo.statusline = " %f%m%=%{v:lua.get_editor_hints()} "
     end
   end,
 })
