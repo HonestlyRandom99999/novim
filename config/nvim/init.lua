@@ -407,17 +407,17 @@ function _G.get_editor_hints()
   local modified = vim.bo.modified
 
   if mode == "v" or mode == "V" or mode == "\22" then
-    return "Ctrl+C Copy  |  Ctrl+X Cut  |  Ctrl+A Select All"
+    return "^C Copy  ^X Cut  ^A Select All"
   elseif modified then
-    return "Ctrl+S Save  |  Ctrl+Z Undo"
+    return "^S Save  ^Z Undo  |  ^G Status  ^L Log  ^D Diff"
   else
-    return "Ctrl+V Paste  |  Ctrl+A Select All"
+    return "^G Status  ^L Log  ^D Diff  |  ^V Paste  ^A Select All"
   end
 end
 
--- Fixed hints for file tree
+-- Fixed hints for file tree (2 lines)
 function _G.get_tree_hints()
-  return "Esc Esc Quit  |  ? Help"
+  return "^G Status  ^L Log  ^D Diff  |  ? Help  |  Esc Esc Quit"
 end
 
 -- Set statusline based on buffer type
