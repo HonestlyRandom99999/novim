@@ -6,91 +6,813 @@
   <title>novim - A friendly terminal editor</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0d1117;
-      color: #c9d1d9;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
     }
-    .container { max-width: 700px; text-align: center; }
-    h1 { font-size: 3rem; margin-bottom: 0.5rem; color: #58a6ff; }
-    .tagline { font-size: 1.2rem; color: #8b949e; margin-bottom: 2rem; }
-    .install-box {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 1.5rem;
+
+    /* Rainbow gradient background */
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        #ff6b6b 0%,
+        #ffa06b 12%,
+        #ffd93d 24%,
+        #6bcb77 36%,
+        #4d96ff 48%,
+        #6b5bff 60%,
+        #c56bff 72%,
+        #ff6bb5 84%,
+        #ff6b6b 100%
+      );
+      background-size: 200% 200%;
+      animation: gradientShift 25s linear infinite;
+      z-index: -2;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 200%; }
+    }
+
+    /* Noise overlay */
+    .bg-noise {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.4;
+      z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* Blur overlay */
+    .bg-blur {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      backdrop-filter: blur(100px);
+      -webkit-backdrop-filter: blur(100px);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 700px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      font-weight: 800;
+      letter-spacing: -2px;
+    }
+
+    .tagline {
+      font-size: 1.3rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .target {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2.5rem;
+    }
+
+    /* Terminal window */
+    .terminal {
+      background: rgba(22, 22, 26, 0.95);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255,255,255,0.1);
       margin: 2rem 0;
+      text-align: left;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
-    .install-box code {
-      font-family: 'SF Mono', Monaco, monospace;
-      font-size: 1rem;
+
+    /* Terminal title bar */
+    .terminal-header {
+      background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.3);
+    }
+
+    .terminal-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .terminal-btn.red {
+      background: linear-gradient(180deg, #ff6058 0%, #e2443c 100%);
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3);
+    }
+
+    .terminal-btn.yellow {
+      background: linear-gradient(180deg, #ffbd2e 0%, #dea123 100%);
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3);
+    }
+
+    .terminal-btn.green {
+      background: linear-gradient(180deg, #27ca40 0%, #1aab29 100%);
+      box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3);
+    }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      font-weight: 500;
+      margin-right: 52px;
+    }
+
+    /* Terminal body - IDE layout */
+    .terminal-body {
+      display: flex;
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      height: 320px;
+    }
+
+    /* File tree (left pane) */
+    .file-tree {
+      width: 140px;
+      background: rgba(22, 22, 26, 0.5);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 8px;
+      overflow: hidden;
+    }
+
+    .tree-item {
+      padding: 3px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s ease;
+    }
+
+    .tree-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .tree-item.folder {
+      color: #7aa2f7;
+    }
+
+    .tree-item.file {
+      color: #c0caf5;
+      padding-left: 18px;
+    }
+
+    .tree-item.active {
+      background: rgba(122, 162, 247, 0.2);
+      color: #7aa2f7;
+    }
+
+    .tree-icon {
+      margin-right: 6px;
+      font-size: 10px;
+      transition: transform 0.15s ease;
+      display: inline-block;
+    }
+
+    .folder-children {
+      overflow: hidden;
+      transition: max-height 0.2s ease;
+    }
+
+    .folder-children.hidden {
+      display: none;
+    }
+
+    /* Editor (right pane) */
+    .editor-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-content {
+      flex: 1;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .code-line {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .line-number {
+      color: #3b4261;
+      width: 28px;
+      text-align: right;
+      padding-right: 12px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .line-number.current {
+      color: #e0af68;
+      font-weight: bold;
+    }
+
+    .code {
+      flex: 1;
+      white-space: pre;
+    }
+
+    /* Syntax highlighting */
+    .kw { color: #bb9af7; }
+    .fn { color: #7aa2f7; }
+    .str { color: #9ece6a; }
+    .num { color: #ff9e64; }
+    .cmt { color: #565f89; font-style: italic; }
+    .var { color: #c0caf5; }
+    .op { color: #89ddff; }
+
+    /* Changed line indicator */
+    .changed-line {
+      background: rgba(158, 206, 106, 0.1);
+      margin: 0 -12px;
+      padding: 0 12px;
+    }
+
+    .git-add {
+      position: relative;
+    }
+
+    .git-add::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      bottom: 2px;
+      width: 3px;
+      background: #9ece6a;
+      border-radius: 2px;
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: rgba(22, 27, 34, 0.8);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11px;
+      color: #8b949e;
+    }
+
+    .status-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-file {
+      color: #c0caf5;
+    }
+
+    .status-modified {
+      color: #e0af68;
+    }
+
+    .status-hints {
       color: #7ee787;
     }
+
+    .status-hints span {
+      margin-left: 12px;
+      color: #8b949e;
+    }
+
+    .status-hints kbd {
+      background: rgba(255,255,255,0.1);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 10px;
+      margin-right: 4px;
+    }
+
+    /* Cursor in editor */
+    .editor-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 14px;
+      background: #c0caf5;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 1px;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* Install command box */
+    .install-box {
+      background: rgba(22, 22, 26, 0.9);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .install-box .prompt {
+      color: #7ee787;
+    }
+
+    .install-box .command {
+      color: #c9d1d9;
+      flex: 1;
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .copy-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    .copy-btn.copied {
+      background: rgba(126, 231, 135, 0.2);
+      border-color: rgba(126, 231, 135, 0.4);
+      color: #7ee787;
+    }
+
+    /* Features grid */
     .features {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: 12px;
       margin-top: 2rem;
       text-align: left;
     }
+
     .feature {
-      background: #161b22;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #30363d;
+      background: rgba(255,255,255,0.1);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
     }
-    .feature h3 { color: #58a6ff; font-size: 0.9rem; margin-bottom: 0.5rem; }
-    .feature p { color: #8b949e; font-size: 0.85rem; }
-    a { color: #58a6ff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .github { margin-top: 2rem; }
+
+    .feature:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    .feature h3 {
+      color: #fff;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .feature p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    /* Links */
+    .links {
+      margin-top: 2rem;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.2s ease;
+    }
+
+    .links a:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    .credits {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .credits a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+    }
+
+    .credits a:hover {
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* Mouse glow effect */
+    .mouse-glow {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Mouse hint badge */
+    .mouse-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      padding: 8px 16px;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.9);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .mouse-hint svg {
+      width: 20px;
+      height: 20px;
+      animation: mouseMove 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes mouseMove {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(3px, 2px); }
+      50% { transform: translate(-2px, 4px); }
+      75% { transform: translate(2px, -2px); }
+    }
+
+    /* Click ripple effect */
+    .ripple {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: scale(0);
+      animation: rippleEffect 0.6s ease-out forwards;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    @keyframes rippleEffect {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1 { font-size: 3rem; }
+      .features { grid-template-columns: 1fr; }
+      .terminal-body { padding: 16px; font-size: 12px; }
+      .mouse-glow { display: none; }
+    }
   </style>
 </head>
 <body>
+  <div class="bg-gradient"></div>
+  <div class="bg-noise"></div>
+  <div class="bg-blur"></div>
+  <div class="mouse-glow" id="mouseGlow"></div>
+
   <div class="container">
+    <div class="mouse-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="6" y="3" width="12" height="18" rx="6" />
+        <line x1="12" y1="7" x2="12" y2="11" />
+      </svg>
+      Click, drag, scroll — just use your mouse
+    </div>
     <h1>novim</h1>
-    <p class="tagline">A friendly terminal editor for vibe coders. Not vim.</p>
+    <p class="tagline">A friendly terminal editor. Not vim.</p>
+    <p class="target">For people who don't know Vim and want VSCode-like editing in the terminal.</p>
 
     <div class="install-box">
-      <code>curl -fsSL novim.dev/install | bash</code>
+      <span class="prompt">$</span>
+      <span class="command" id="install-cmd">curl -fsSL novim.dev/install | bash</span>
+      <button class="copy-btn" onclick="copyCommand()">Copy</button>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="terminal-btn red"></div>
+          <div class="terminal-btn yellow"></div>
+          <div class="terminal-btn green"></div>
+        </div>
+        <div class="terminal-title">novim — ~/project</div>
+      </div>
+      <div class="terminal-body">
+        <!-- File Tree -->
+        <div class="file-tree">
+          <div class="tree-item folder open" data-folder="project" onclick="toggleFolder(this)"><span class="tree-icon">▼</span>project</div>
+          <div class="folder-children" data-parent="project">
+            <div class="tree-item folder open" data-folder="src" onclick="toggleFolder(this)" style="padding-left: 12px;"><span class="tree-icon">▼</span>src</div>
+            <div class="folder-children" data-parent="src">
+              <div class="tree-item file active" data-file="app.js" onclick="openFile(this)" style="padding-left: 24px;">app.js</div>
+              <div class="tree-item file" data-file="utils.js" onclick="openFile(this)" style="padding-left: 24px;">utils.js</div>
+            </div>
+            <div class="tree-item folder" data-folder="tests" onclick="toggleFolder(this)" style="padding-left: 12px;"><span class="tree-icon">▶</span>tests</div>
+            <div class="folder-children hidden" data-parent="tests">
+              <div class="tree-item file" data-file="app.test.js" onclick="openFile(this)" style="padding-left: 24px;">app.test.js</div>
+            </div>
+            <div class="tree-item file" data-file="package.json" onclick="openFile(this)">package.json</div>
+            <div class="tree-item file" data-file="README.md" onclick="openFile(this)">README.md</div>
+          </div>
+        </div>
+        <!-- Editor -->
+        <div class="editor-pane">
+          <div class="editor-content" id="editorContent">
+            <!-- Content will be dynamically inserted -->
+          </div>
+          <div class="status-bar">
+            <div class="status-left">
+              <span class="status-file" id="statusFile">app.js</span>
+              <span class="status-modified" id="statusModified">[+]</span>
+            </div>
+            <div class="status-hints">
+              <kbd>^S</kbd>Save<span><kbd>^Z</kbd>Undo</span><span><kbd>?</kbd>Help</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="features">
       <div class="feature">
-        <h3>VSCode-like</h3>
-        <p>Just type to edit. No modes to learn.</p>
+        <h3>Just Type</h3>
+        <p>No modes to learn. Type to edit like VSCode.</p>
       </div>
       <div class="feature">
         <h3>Standard Shortcuts</h3>
-        <p>Ctrl+S, Ctrl+Z, Ctrl+C/V. No learning curve.</p>
+        <p>Ctrl+S save, Ctrl+Z undo, Ctrl+C/V copy/paste.</p>
       </div>
       <div class="feature">
         <h3>Mouse Support</h3>
-        <p>Click, drag, select. Double-click to open.</p>
+        <p>Click, drag, select. Double-click to open files.</p>
       </div>
       <div class="feature">
         <h3>File Tree</h3>
-        <p>Built-in file browser on the left.</p>
+        <p>Built-in file browser on the left side.</p>
       </div>
       <div class="feature">
-        <h3>Dynamic Hints</h3>
-        <p>Status bar shows relevant shortcuts.</p>
+        <h3>Git Integration</h3>
+        <p>Ctrl+G status, Ctrl+L log, Ctrl+D diff.</p>
       </div>
       <div class="feature">
         <h3>Safe Quit</h3>
-        <p>Prompts to save before closing.</p>
+        <p>Esc Esc to quit. Prompts to save changes.</p>
       </div>
     </div>
 
-    <p class="github">
+    <div class="links">
       <a href="https://github.com/link2004/novim">GitHub</a>
+      <a href="https://github.com/link2004/novim#how-it-works">For Neovim Users</a>
+    </div>
+
+    <p class="credits">
+      Powered by <a href="https://neovim.io">Neovim</a> ·
+      <a href="https://github.com/lewis6991/gitsigns.nvim">gitsigns.nvim</a> ·
+      <a href="https://github.com/tokyo-night/tokyo-night-vscode-theme">Tokyo Night</a>
     </p>
   </div>
+
+  <script>
+    // File contents for demo
+    const files = {
+      'app.js': {
+        modified: true,
+        lines: [
+          { num: 1, code: '<span class="cmt">// Simple Express app</span>' },
+          { num: 2, code: '<span class="kw">const</span> <span class="var">express</span> <span class="op">=</span> <span class="fn">require</span>(<span class="str">\'express\'</span>)' },
+          { num: 3, code: '<span class="kw">const</span> <span class="var">app</span> <span class="op">=</span> <span class="fn">express</span>()' },
+          { num: 4, code: '' },
+          { num: 5, code: '<span class="var">app</span>.<span class="fn">get</span>(<span class="str">\'/\'</span>, (<span class="var">req</span>, <span class="var">res</span>) <span class="op">=></span> {', git: true, current: true },
+          { num: 6, code: '  <span class="var">res</span>.<span class="fn">send</span>(<span class="str">\'Hello World!\'</span>)', git: true, cursor: true },
+          { num: 7, code: '})', git: true },
+          { num: 8, code: '' },
+          { num: 9, code: '<span class="var">app</span>.<span class="fn">listen</span>(<span class="num">3000</span>)' },
+        ]
+      },
+      'utils.js': {
+        modified: false,
+        lines: [
+          { num: 1, code: '<span class="cmt">// Utility functions</span>' },
+          { num: 2, code: '' },
+          { num: 3, code: '<span class="kw">export</span> <span class="kw">function</span> <span class="fn">formatDate</span>(<span class="var">date</span>) {', current: true },
+          { num: 4, code: '  <span class="kw">return</span> <span class="var">date</span>.<span class="fn">toLocaleDateString</span>()', cursor: true },
+          { num: 5, code: '}' },
+          { num: 6, code: '' },
+          { num: 7, code: '<span class="kw">export</span> <span class="kw">function</span> <span class="fn">capitalize</span>(<span class="var">str</span>) {' },
+          { num: 8, code: '  <span class="kw">return</span> <span class="var">str</span>[<span class="num">0</span>].<span class="fn">toUpperCase</span>() <span class="op">+</span> <span class="var">str</span>.<span class="fn">slice</span>(<span class="num">1</span>)' },
+          { num: 9, code: '}' },
+        ]
+      },
+      'app.test.js': {
+        modified: false,
+        lines: [
+          { num: 1, code: '<span class="kw">const</span> <span class="var">request</span> <span class="op">=</span> <span class="fn">require</span>(<span class="str">\'supertest\'</span>)' },
+          { num: 2, code: '<span class="kw">const</span> <span class="var">app</span> <span class="op">=</span> <span class="fn">require</span>(<span class="str">\'./app\'</span>)' },
+          { num: 3, code: '' },
+          { num: 4, code: '<span class="fn">describe</span>(<span class="str">\'GET /\'</span>, () <span class="op">=></span> {', current: true },
+          { num: 5, code: '  <span class="fn">it</span>(<span class="str">\'returns Hello World\'</span>, <span class="kw">async</span> () <span class="op">=></span> {', cursor: true },
+          { num: 6, code: '    <span class="kw">const</span> <span class="var">res</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">request</span>(<span class="var">app</span>).<span class="fn">get</span>(<span class="str">\'/\'</span>)' },
+          { num: 7, code: '    <span class="fn">expect</span>(<span class="var">res</span>.<span class="var">text</span>).<span class="fn">toBe</span>(<span class="str">\'Hello World!\'</span>)' },
+          { num: 8, code: '  })' },
+          { num: 9, code: '})' },
+        ]
+      },
+      'package.json': {
+        modified: false,
+        lines: [
+          { num: 1, code: '{', current: true },
+          { num: 2, code: '  <span class="str">"name"</span>: <span class="str">"my-app"</span>,' },
+          { num: 3, code: '  <span class="str">"version"</span>: <span class="str">"1.0.0"</span>,' },
+          { num: 4, code: '  <span class="str">"main"</span>: <span class="str">"app.js"</span>,' },
+          { num: 5, code: '  <span class="str">"scripts"</span>: {' },
+          { num: 6, code: '    <span class="str">"start"</span>: <span class="str">"node app.js"</span>,', cursor: true },
+          { num: 7, code: '    <span class="str">"test"</span>: <span class="str">"jest"</span>' },
+          { num: 8, code: '  }' },
+          { num: 9, code: '}' },
+        ]
+      },
+      'README.md': {
+        modified: true,
+        lines: [
+          { num: 1, code: '<span class="fn"># My App</span>', current: true },
+          { num: 2, code: '' },
+          { num: 3, code: 'A simple Express application.', git: true },
+          { num: 4, code: '' },
+          { num: 5, code: '<span class="fn">## Install</span>' },
+          { num: 6, code: '' },
+          { num: 7, code: '<span class="str">`npm install`</span>', cursor: true },
+          { num: 8, code: '' },
+          { num: 9, code: '<span class="fn">## Run</span>' },
+        ]
+      }
+    };
+
+    // Render file content
+    function renderFile(filename) {
+      const file = files[filename];
+      const editor = document.getElementById('editorContent');
+      const statusFile = document.getElementById('statusFile');
+      const statusModified = document.getElementById('statusModified');
+
+      let html = '';
+      file.lines.forEach(line => {
+        const gitClass = line.git ? 'git-add' : '';
+        const currentClass = line.current ? 'current' : '';
+        const cursor = line.cursor ? '<span class="editor-cursor"></span>' : '';
+        html += `<div class="code-line ${gitClass}"><span class="line-number ${currentClass}">${line.num}</span><code class="code">${line.code}${cursor}</code></div>`;
+      });
+
+      editor.innerHTML = html;
+      statusFile.textContent = filename;
+      statusModified.textContent = file.modified ? '[+]' : '';
+      statusModified.style.display = file.modified ? 'inline' : 'none';
+    }
+
+    // Toggle folder open/close
+    function toggleFolder(el) {
+      const folderName = el.dataset.folder;
+      const children = document.querySelector(`.folder-children[data-parent="${folderName}"]`);
+      const icon = el.querySelector('.tree-icon');
+
+      if (children.classList.contains('hidden')) {
+        children.classList.remove('hidden');
+        icon.textContent = '▼';
+        el.classList.add('open');
+      } else {
+        children.classList.add('hidden');
+        icon.textContent = '▶';
+        el.classList.remove('open');
+      }
+    }
+
+    // Open file in editor
+    function openFile(el) {
+      const filename = el.dataset.file;
+
+      // Update active state
+      document.querySelectorAll('.tree-item.file').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+
+      // Render file
+      renderFile(filename);
+    }
+
+    // Copy command
+    function copyCommand() {
+      const cmd = document.getElementById('install-cmd').textContent;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Mouse glow follow
+    const glow = document.getElementById('mouseGlow');
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // Click ripple effect
+    document.addEventListener('click', (e) => {
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
+      ripple.style.width = '50px';
+      ripple.style.height = '50px';
+      ripple.style.marginLeft = '-25px';
+      ripple.style.marginTop = '-25px';
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+
+    // Initialize with app.js
+    renderFile('app.js');
+  </script>
 </body>
 </html>

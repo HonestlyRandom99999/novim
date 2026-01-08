@@ -7,6 +7,11 @@
 --   - Standard shortcuts (Ctrl+S, Ctrl+Z, etc.)
 --   - File tree on the left
 --   - No vim knowledge required
+--
+-- Credits:
+--   - Neovim (Apache 2.0 / Vim License) - https://neovim.io
+--   - gitsigns.nvim (MIT) - Lewis Russell
+--   - Tokyo Night color palette (MIT) - enkia
 ----------------------------------------------------------------------
 
 
@@ -174,7 +179,7 @@ vim.opt.backspace = { "indent", "eol", "start" }
 
 
 ----------------------------------------------------------------------
--- 2. Mouse Settings
+-- 3. Mouse Settings
 ----------------------------------------------------------------------
 
 vim.opt.mouse = "a"
@@ -185,7 +190,7 @@ vim.opt.clipboard = "unnamedplus"
 
 
 ----------------------------------------------------------------------
--- 3. Highlight Changed Lines
+-- 4. Highlight Changed Lines
 ----------------------------------------------------------------------
 
 -- Highlight color for changed lines (uses Tokyo Night green tint)
@@ -220,7 +225,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 
 
 ----------------------------------------------------------------------
--- 4. Backspace / Delete Support
+-- 5. Backspace / Delete Support
 -- Handle terminal differences (<BS> / <C-h>)
 ----------------------------------------------------------------------
 
@@ -263,7 +268,7 @@ vim.keymap.set("n", "<CR>", "i<CR>", { noremap = true, silent = true })
 
 
 ----------------------------------------------------------------------
--- 4. Ctrl / Cmd Shortcuts
+-- 6. Ctrl / Cmd Shortcuts
 ----------------------------------------------------------------------
 
 -- Select all
@@ -301,7 +306,7 @@ vim.keymap.set({ "n", "i", "v" }, "<D-v>", '"+p', { silent = true })
 
 
 ----------------------------------------------------------------------
--- 5. File Tree (netrw)
+-- 7. File Tree (netrw)
 ----------------------------------------------------------------------
 
 vim.g.netrw_browse_split = 4   -- Open selected file in right pane
@@ -322,7 +327,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 
 ----------------------------------------------------------------------
--- 6. Help Screen (Press ? to show)
+-- 8. Help Screen (Press ? to show)
 ----------------------------------------------------------------------
 
 local function show_help()
@@ -401,7 +406,7 @@ vim.keymap.set("n", "?", show_help, { silent = true })
 
 
 ----------------------------------------------------------------------
--- 7. Dynamic Hints (in statusline)
+-- 9. Dynamic Hints (in statusline)
 ----------------------------------------------------------------------
 
 -- Generate hints for editor (dynamic based on state)
@@ -435,7 +440,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
 
 
 ----------------------------------------------------------------------
--- 8. Startup Layout
+-- 10. Startup Layout
 -- Opens file tree on left, editor on right
 ----------------------------------------------------------------------
 
@@ -456,7 +461,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 
 ----------------------------------------------------------------------
--- 8. Exit
+-- 11. Exit
 ----------------------------------------------------------------------
 
 local function quit_with_confirm()
@@ -496,7 +501,7 @@ vim.keymap.set("n", "<Esc><Esc>", quit_with_confirm, { silent = true })
 
 
 ----------------------------------------------------------------------
--- 9. Git Signs (show changed lines)
+-- 12. Git Signs (show changed lines)
 ----------------------------------------------------------------------
 
 require("gitsigns").setup({
@@ -528,7 +533,7 @@ hl("GitSignsDelete", { fg = colors.red })
 
 
 ----------------------------------------------------------------------
--- 10. Git Shortcuts
+-- 13. Git Shortcuts
 ----------------------------------------------------------------------
 
 -- Show git status in a floating window
