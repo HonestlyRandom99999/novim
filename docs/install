@@ -6,7 +6,17 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
+
+# Bright colors for rainbow
+BR_RED='\033[1;31m'
+BR_YELLOW='\033[1;33m'
+BR_GREEN='\033[1;32m'
+BR_CYAN='\033[1;36m'
+BR_BLUE='\033[1;34m'
+BR_MAGENTA='\033[1;35m'
 
 echo -e "${BLUE}"
 echo "                      _"
@@ -154,6 +164,42 @@ check_path() {
   fi
 }
 
+# Show success message
+show_success() {
+  echo ""
+  # Rainbow NOVIM - each letter in different color
+  echo -e " ${BR_RED}███╗   ██╗${NC}  ${BR_YELLOW}██████╗${NC}  ${BR_GREEN}██╗   ██╗${NC} ${BR_CYAN}██╗${NC} ${BR_BLUE}███╗   ███╗${NC}"
+  echo -e " ${BR_RED}████╗  ██║${NC} ${BR_YELLOW}██╔═══██╗${NC} ${BR_GREEN}██║   ██║${NC} ${BR_CYAN}██║${NC} ${BR_BLUE}████╗ ████║${NC}"
+  echo -e " ${BR_RED}██╔██╗ ██║${NC} ${BR_YELLOW}██║   ██║${NC} ${BR_GREEN}██║   ██║${NC} ${BR_CYAN}██║${NC} ${BR_BLUE}██╔████╔██║${NC}"
+  echo -e " ${BR_RED}██║╚██╗██║${NC} ${BR_YELLOW}██║   ██║${NC} ${BR_GREEN}╚██╗ ██╔╝${NC} ${BR_CYAN}██║${NC} ${BR_BLUE}██║╚██╔╝██║${NC}"
+  echo -e " ${BR_RED}██║ ╚████║${NC} ${BR_YELLOW}╚██████╔╝${NC}  ${BR_GREEN}╚████╔╝${NC}  ${BR_CYAN}██║${NC} ${BR_BLUE}██║ ╚═╝ ██║${NC}"
+  echo -e " ${BR_RED}╚═╝  ╚═══╝${NC}  ${BR_YELLOW}╚═════╝${NC}    ${BR_GREEN}╚═══╝${NC}   ${BR_CYAN}╚═╝${NC} ${BR_BLUE}╚═╝     ╚═╝${NC}"
+  echo ""
+  echo -e "        ${GREEN}✓ Installation complete!${NC}"
+  echo ""
+  echo -e "  ${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  echo ""
+  echo -e "  ${YELLOW}Quick Start${NC}"
+  echo -e "    ${GREEN}novim${NC}              Open editor"
+  echo -e "    ${GREEN}novim file.txt${NC}     Edit a file"
+  echo ""
+  echo -e "  ${YELLOW}Commands${NC}"
+  echo -e "    ${GREEN}novim --help${NC}       Show help"
+  echo -e "    ${GREEN}novim --update${NC}     Update to latest version"
+  echo -e "    ${GREEN}novim --uninstall${NC}  Remove novim"
+  echo -e "    ${GREEN}novim --version${NC}    Show version"
+  echo ""
+  echo -e "  ${YELLOW}Inside Editor${NC}"
+  echo -e "    ${GREEN}?${NC}                  Show keyboard shortcuts"
+  echo -e "    ${GREEN}Ctrl+S${NC}             Save file"
+  echo -e "    ${GREEN}Esc Esc${NC}            Quit"
+  echo ""
+  echo -e "  ${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  echo ""
+  echo -e "  Run ${GREEN}novim${NC} to start editing. Happy coding!"
+  echo ""
+}
+
 # Main
 main() {
   if ! check_neovim; then
@@ -162,11 +208,7 @@ main() {
 
   install_novim
   check_path
-
-  echo ""
-  echo -e "${GREEN}Done!${NC} Run ${BLUE}novim${NC} to start editing."
-  echo "Press ${BLUE}?${NC} for help."
-  echo ""
+  show_success
 }
 
 main
