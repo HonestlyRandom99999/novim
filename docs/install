@@ -20,7 +20,7 @@ echo ""
 
 INSTALL_DIR="${HOME}/.local/bin"
 NOVIM_DIR="${HOME}/.local/share/novim"
-REPO="ogawariku/novim"
+REPO="link2004/novim"
 
 # Check for Neovim
 check_neovim() {
