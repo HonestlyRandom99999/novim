@@ -1,6 +1,10 @@
-# novim
+<p align="center">
+  <img src="docs/logo.png" alt="novim" width="400">
+</p>
 
-A friendly terminal editor for vibe coders. Not vim.
+<h1 align="center">novim</h1>
+
+<p align="center">A friendly terminal editor for vibe coders. Not vim.</p>
 
 ## Install
 
