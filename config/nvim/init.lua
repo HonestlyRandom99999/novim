@@ -420,7 +420,7 @@ end
 
 -- Git hints (always visible)
 function _G.get_git_hints()
-  return "Git: ^G ^L ^D"
+  return "Git: ^G Status  ^L Log  ^D Diff"
 end
 
 -- Fixed hints for file tree
