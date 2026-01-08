@@ -420,7 +420,7 @@ end
 
 -- Git hints (always visible)
 function _G.get_git_hints()
-  return "Git: ^G Status  ^L Log  ^D Diff"
+  return "Git: ^G ^L ^D"
 end
 
 -- Fixed hints for file tree
@@ -434,11 +434,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "FileType" }, {
   callback = function()
     local ft = vim.bo.filetype
     if ft == "netrw" then
-      -- File tree: git hints on left, navigation hints on right
-      vim.wo.statusline = " %{v:lua.get_git_hints()}%=%{v:lua.get_tree_hints()} "
+      -- File tree: navigation hints on left, git hints on right
+      vim.wo.statusline = " %{v:lua.get_tree_hints()}%=%{v:lua.get_git_hints()} "
     else
-      -- Editor: filename + git hints on left, editor hints on right
-      vim.wo.statusline = " %f%m  %{v:lua.get_git_hints()}%=%{v:lua.get_editor_hints()} "
+      -- Editor: filename on left, git hints on right
+      vim.wo.statusline = " %f%m%=%{v:lua.get_git_hints()} "
     end
   end,
 })
