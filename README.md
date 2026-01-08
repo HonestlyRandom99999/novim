@@ -18,6 +18,10 @@
   </a>
 </p>
 
+<p align="center">
+  <img src="docs/demo.gif" alt="novim demo" width="600">
+</p>
+
 > **Target audience**: Users who don't know Vim and want a VSCode-like editing experience in the terminal.
 
 > **For Vim/Neovim users**: This is just a Neovim config. See [How it Works](#how-it-works) if you want to reference the config or cherry-pick ideas.
@@ -31,22 +35,7 @@ curl -fsSL novim.dev/install | bash
 ## Update
 
 ```bash
-novim --update
-```
-
-## Uninstall
-
-```bash
-novim --uninstall
-```
-
-## Usage
-
-```bash
-novim              # Open editor
-novim file.txt     # Open file
-novim --help       # Show help
-novim --version    # Show version
+ow version
 ```
 
 Press `?` for help inside the editor.
