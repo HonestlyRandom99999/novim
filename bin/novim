@@ -40,6 +40,40 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   exit 0
 fi
 
+# Show stats (Easter egg)
+if [[ "${1:-}" == "--stats" ]]; then
+  # Bright colors for rainbow
+  BR_RED='\033[1;31m'
+  BR_YELLOW='\033[1;33m'
+  BR_GREEN='\033[1;32m'
+  BR_CYAN='\033[1;36m'
+  BR_BLUE='\033[1;34m'
+  CYAN='\033[0;36m'
+  NC='\033[0m'
+
+  # Fetch download count
+  DOWNLOADS=$(curl -s "https://api.github.com/repos/${REPO}/releases" | grep -o '"download_count": [0-9]*' | grep -o '[0-9]*' | awk '{sum+=$1} END {print sum}' 2>/dev/null)
+
+  echo ""
+  # Rainbow NOVIM logo
+  echo -e " ${BR_RED}███╗   ██╗${NC}  ${BR_YELLOW}██████╗${NC}  ${BR_GREEN}██╗   ██╗${NC} ${BR_CYAN}██╗${NC} ${BR_BLUE}███╗   ███╗${NC}"
+  echo -e " ${BR_RED}████╗  ██║${NC} ${BR_YELLOW}██╔═══██╗${NC} ${BR_GREEN}██║   ██║${NC} ${BR_CYAN}██║${NC} ${BR_BLUE}████╗ ████║${NC}"
+  echo -e " ${BR_RED}██╔██╗ ██║${NC} ${BR_YELLOW}██║   ██║${NC} ${BR_GREEN}██║   ██║${NC} ${BR_CYAN}██║${NC} ${BR_BLUE}██╔████╔██║${NC}"
+  echo -e " ${BR_RED}██║╚██╗██║${NC} ${BR_YELLOW}██║   ██║${NC} ${BR_GREEN}╚██╗ ██╔╝${NC} ${BR_CYAN}██║${NC} ${BR_BLUE}██║╚██╔╝██║${NC}"
+  echo -e " ${BR_RED}██║ ╚████║${NC} ${BR_YELLOW}╚██████╔╝${NC}  ${BR_GREEN}╚████╔╝${NC}  ${BR_CYAN}██║${NC} ${BR_BLUE}██║ ╚═╝ ██║${NC}"
+  echo -e " ${BR_RED}╚═╝  ╚═══╝${NC}  ${BR_YELLOW}╚═════╝${NC}    ${BR_GREEN}╚═══╝${NC}   ${BR_CYAN}╚═╝${NC} ${BR_BLUE}╚═╝     ╚═╝${NC}"
+  echo ""
+
+  # Display download count
+  if [[ -n "$DOWNLOADS" && "$DOWNLOADS" -gt 0 ]]; then
+    echo -e "           ${CYAN}★${NC} ${BR_CYAN}${DOWNLOADS}${NC} ${CYAN}downloads${NC} ${CYAN}★${NC}"
+  else
+    echo -e "           ${CYAN}★${NC} ${BR_CYAN}Fetching stats...${NC} ${CYAN}★${NC}"
+  fi
+  echo ""
+  exit 0
+fi
+
 # Update novim
 if [[ "${1:-}" == "--update" ]]; then
   echo -e "${BLUE}Checking for updates...${NC}"

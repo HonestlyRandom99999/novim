@@ -13,6 +13,9 @@
   <a href="https://github.com/link2004/novim">
     <img src="https://img.shields.io/badge/GitHub-link2004%2Fnovim-181717?style=flat-square&logo=github" alt="GitHub">
   </a>
+  <a href="https://github.com/link2004/novim/releases">
+    <img src="https://img.shields.io/github/downloads/link2004/novim/total?style=flat-square&color=cyan" alt="Downloads">
+  </a>
   <a href="https://github.com/link2004/novim/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
   </a>
